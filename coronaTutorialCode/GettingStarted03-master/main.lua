@@ -46,7 +46,7 @@ local options =
 local objectSheet = graphics.newImageSheet( "gameObjects.png", options )
 
 -- Initialize variables
-local lives = 1
+local lives = 3
 local score = 0
 local died = false
 
@@ -56,8 +56,7 @@ local ship
 local gameLoopTimer
 local livesText
 local scoreText
-local resetMessage
-local gameOver
+
 -- Set up display groups
 local backGroup = display.newGroup()  -- Display group for the background image
 local mainGroup = display.newGroup()  -- Display group for the ship, asteroids, lasers, etc.
@@ -129,7 +128,7 @@ local function fireLaser()
 	newLaser.y = ship.y
 	newLaser:toBack()
 
-	transition.to( newLaser, { y=-40, time=1000,
+	transition.to( newLaser, { y=-40, time=500,
 		onComplete = function() display.remove( newLaser ) end
 	} )
 end
@@ -137,7 +136,6 @@ end
 ship:addEventListener( "tap", fireLaser )
 
 
---touch events have phases: began, moved, and ended/cancelled
 local function dragShip( event )
 
 	local ship = event.target
@@ -148,12 +146,10 @@ local function dragShip( event )
 		display.currentStage:setFocus( ship )
 		-- Store initial offset position
 		ship.touchOffsetX = event.x - ship.x
-    ship.touchOffsetY = event.y - ship.y
 
 	elseif ( "moved" == phase ) then
 		-- Move the ship to the new touch position
 		ship.x = event.x - ship.touchOffsetX
-    ship.y = event.y - ship.touchOffsetY
 
 	elseif ( "ended" == phase or "cancelled" == phase ) then
 		-- Release touch focus on the ship
@@ -172,62 +168,40 @@ local function gameLoop()
 	createAsteroid()
 
 	-- Remove asteroids which have drifted off screen
-  --counting down from the number asteroids in the table which is constantly
-  --changing, that's what the # sign does--> it gives us that new length of the
-  --asteroids table
-  --[[
-  this tells lua to use the index i, start at #asteroidsTable, stop at 1, and
-  count by -1 (decrement)
-  --]]
 	for i = #asteroidsTable, 1, -1 do
 		local thisAsteroid = asteroidsTable[i]
 
-    if ( thisAsteroid.x < -100 or
-       thisAsteroid.x > display.contentWidth + 100 or
-       thisAsteroid.y < -100 or
-       thisAsteroid.y > display.contentHeight + 100 )
-    then
---[[if ( thisAsteroid.x < -100 or
-   thisAsteroid.x > display.contentWidth + 100 or
-   thisAsteroid.y < -100 or
-   thisAsteroid.y > display.contentHeight + 100 )
-then
-]]
-
+		if ( thisAsteroid.x < -100 or
+			 thisAsteroid.x > display.contentWidth + 100 or
+			 thisAsteroid.y < -100 or
+			 thisAsteroid.y > display.contentHeight + 100 )
+		then
 			display.remove( thisAsteroid )
 			table.remove( asteroidsTable, i )
-		end--end of if statement block
-	end--end of for loop block
-end --end of gameLoop()
---1 second delay, call gameLoop(), infinite times (0, or -1)
-gameLoopTimer = timer.performWithDelay( 1000, gameLoop, 0 )
+		end
+	end
+end
+
+gameLoopTimer = timer.performWithDelay( 500, gameLoop, 0 )
 
 
 local function restoreShip()
---setting to false makes ship temporarily invincible
+
 	ship.isBodyActive = false
-  --cancel any velocity the ship had from being hit by a moving asteroid, otherwise
-  --it might have bounced off screen or something like that
 	ship:setLinearVelocity( 0, 0 )
-  --reposition ship to the center of the bottom of the screen
 	ship.x = display.contentCenterX
 	ship.y = display.contentHeight - 100
 
-	-- Fade in the ship, restoring to active phsyics with a callback on completion
+	-- Fade in the ship
 	transition.to( ship, { alpha=1, time=4000,
 		onComplete = function()
 			ship.isBodyActive = true
 			died = false
-		end  --end callback function 'onComplete'
+		end
 	} )
-
-end  --end restoreShip()
-
+end
 
 
-
---collisions have phases just like touch events:
---began, & ended
 local function onCollision( event )
 
 	if ( event.phase == "began" ) then
@@ -265,11 +239,6 @@ local function onCollision( event )
 
 				if ( lives == 0 ) then
 					display.remove( ship )
-          timer.cancel( gameLoopTimer );
-          resetMessage = display.newText( uiGroup, "Reset? ", display.contentCenterX, display.contentCenterY, native.systemFont, 55 )
-          --resetCycle()
-
-          --timer.pause( gameLoopTimer )
 				else
 					ship.alpha = 0
 					timer.performWithDelay( 1000, restoreShip )
