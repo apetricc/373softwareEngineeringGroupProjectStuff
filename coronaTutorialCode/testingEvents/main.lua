@@ -98,12 +98,21 @@ display.contentCenterY, native.systemFontBold, 25 )
 local function myTouchListener( event )
 
   if ( event.phase == "began" ) then
-          --stuff:removeSelf()
-          display.Hide(stuff)
-          stuff = nil
-          local textObject = display.newText("you touched the text!",
+          textObject2:removeSelf()
+          print "event triggered, stuff happened."
+          --display.Hide(textObject2)
+          --stuff = nil
+          --[[local textObject2 = display.newText("you touched the text!",
           display.contentCenterX, display.contentCenterY+55,
            native.systemFontBold, 15 )
+           ]]
+           stuff = "you touched the text!"
+           textObject2 = display.newText(stuff, display.contentCenterX,
+           display.contentCenterY, native.systemFontBold, 25 )
+
+
+           --textObject2 = nil
+
   end
   return true
 end

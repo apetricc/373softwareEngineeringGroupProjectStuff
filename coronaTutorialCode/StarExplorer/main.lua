@@ -46,7 +46,7 @@ local options =
 local objectSheet = graphics.newImageSheet( "gameObjects.png", options )
 
 -- Initialize variables
-local lives = 1
+local lives = 2
 local score = 0
 local died = false
 
@@ -205,7 +205,8 @@ gameLoopTimer = timer.performWithDelay( 1000, gameLoop, 0 )
 
 local function restoreShip()
 --setting to false makes ship temporarily invincible
-	ship.isBodyActive = false
+
+
   --cancel any velocity the ship had from being hit by a moving asteroid, otherwise
   --it might have bounced off screen or something like that
 	ship:setLinearVelocity( 0, 0 )
@@ -222,6 +223,53 @@ local function restoreShip()
 	} )
 
 end  --end restoreShip()
+
+
+local function resetShip()
+
+    ship = display.newImageRect( mainGroup, objectSheet, 4, 98, 79 )
+    ship.x = display.contentCenterX
+    ship.y = display.contentHeight - 100
+    physics.addBody( ship, { radius=30, isSensor=true } )
+    ship.isBodyActive = true
+    ship.myName = "ship"
+  	restoreShip()
+    ship:addEventListener( "tap", fireLaser )
+    ship:addEventListener( "touch", dragShip )
+
+end
+
+
+
+
+local function myTouchListener( event )
+
+  if ( event.phase == "began" ) then
+          resetMessage:removeSelf()
+          print "event triggered, stuff happened."
+          --display.Hide(textObject2)
+          --stuff = nil
+          --[[local textObject2 = display.newText("you touched the text!",
+          display.contentCenterX, display.contentCenterY+55,
+           native.systemFontBold, 15 )
+           ]]
+           lives = 3
+           livesText.text = "Lives: "..lives
+           resetShip()
+
+           timer.performWithDelay( 1000)
+           --timer.performWithDelay( 1000, restoreShip )
+           --textObject2 = nil
+
+  end
+  return true
+end
+
+
+
+
+
+
 
 
 
@@ -265,8 +313,10 @@ local function onCollision( event )
 
 				if ( lives == 0 ) then
 					display.remove( ship )
-          timer.cancel( gameLoopTimer );
-          resetMessage = display.newText( uiGroup, "Reset? ", display.contentCenterX, display.contentCenterY, native.systemFont, 55 )
+          --timer.pause( gameLoopTimer );
+          resetMessage = display.newText( uiGroup, "Reset? ",
+           display.contentCenterX, display.contentCenterY, native.systemFont, 55 )
+           resetMessage:addEventListener( "touch", myTouchListener )
           --resetCycle()
 
           --timer.pause( gameLoopTimer )
