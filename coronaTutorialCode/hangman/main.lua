@@ -17,7 +17,7 @@ local width = 480; local height = 320;
 
 
 
-local magicword = "magicword"
+local magicword = "MAGICWORD"
 
 -- local length = strlen(magicword)
 -- print ("The length of the magicword is: " .. length)
@@ -44,7 +44,7 @@ local magicword = "magicword"
 local theLength = string.len(magicword)
 
 print("The length of the magic word is: " ..theLength)
-print ("The index where the letter is at: " .. string.find(magicword,"c"))
+--print ("The index where the letter is at: " .. string.find(magicword,"c"))
 
 if (string.find(magicword,"c")~=nil) then
 	print ("the letter was in the magicword")
@@ -122,7 +122,7 @@ local newTextObject = display.newText(alphabet[1], 100, 200, native.systeFont, 5
 
 
 
-
+--create alphabet grid for touch interaction with copy, then compare original array to magic word 
 local initialX = endX - 155
 local startLetters = initialX
 local yCoord = startY
@@ -146,7 +146,9 @@ for i = 1, 26, 1 do
 				        -- end
 				        newLetter[i].alpha = 1
 				        newLetter[i]:setFillColor(1,0,0)
-				        print("This letter was pressed in the event: "..alphabet[i])
+					    if (string.find(magicword,alphabet[i])~=nil) then 
+					        print("This letter was pressed in the event: "..alphabet[i])
+					    end
 			    end
 
 			    return true
