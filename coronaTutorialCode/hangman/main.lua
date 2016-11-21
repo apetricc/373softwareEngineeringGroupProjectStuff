@@ -17,7 +17,7 @@ local width = 480; local height = 320;
 
 
 
-local magicword = "MAGICWORD"
+local magicword = "OCTOPUS"
 
 -- local length = strlen(magicword)
 -- print ("The length of the magicword is: " .. length)
@@ -58,12 +58,12 @@ alphabet = {}
 alphabet = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
 "Q","R","S","T","U","V","W","X","Y","Z"}
 
-alphabet3 = {}
-alphabet3[1] = "!"
-print (alphabet3[1])
-print (alphabet[1])
+-- alphabet3 = {}
+-- alphabet3[1] = "!"
+-- print (alphabet3[1])
+-- print (alphabet[1])
 
-local newTextObject = display.newText(alphabet[1], 100, 200, native.systeFont, 55 )
+--local newTextObject = display.newText(alphabet[1], 100, 200, native.systeFont, 55 )
 -- alphabet = {[1]="A",[2]="B",[3]="C",[4]="D",[5]="E",[6]="F",[7]="G",[8]="H",
 -- [9]="I",[10]="J",[11]="K",[12]="L",[13]="M",[14]="N",[15]="O",[16]="P",[17]="Q",
 -- [18]="R",[19]="S",[20]="T",[21]="U",[22]="V",[23]="W",[24]="X",[25]="Y",[26]="Z"}
@@ -122,7 +122,53 @@ local newTextObject = display.newText(alphabet[1], 100, 200, native.systeFont, 5
 
 
 
---create alphabet grid for touch interaction with copy, then compare original array to magic word 
+
+--******************************************************************************
+--CREATE MAGICWORD DISPLAY GRID
+--change alpha to 1 when letters selected from alphabet 
+--******************************************************************************
+magicCopy = {}
+magicCopy2 = {}
+local magicX = 50
+local result
+for i = 1, string.len(magicword), 1 do
+	result =  string.sub(magicword, i, i)
+	--print (string.sub(magicword, i))
+	print (result)
+end
+
+for i = 1, string.len(magicword), 1 do
+	magicCopy[i] = string.sub(magicword, i, i)
+	--magicCopy[i] = display.newText(string.sub(magicWord,i,i+1), 100, 250, native.systemFontBold, 35 )
+	magicCopy2[i] = display.newText(magicword:sub(i,i), magicX, 255, native.systemFontBold, 35 )
+	magicX = magicX + 35
+	magicCopy2[i].alpha = .25
+end
+
+local function magicwordListener( event )
+	if ( event.phase == "began" ) then
+			
+			local var
+			for i = 1, 26, 1 do 
+				--alphabet[i]:removeEventListener("touch",letterListener)
+				
+
+				-- if (newLetter[i].alpha > .25 and string.find(magicword,alphabet[i])~=nil) then
+				-- --	print (tostring(alphabet[i]) .." was tapped.")
+				-- 	magicCopy2[i].alpha = 1
+				-- end--end if
+			end --end for
+	end--end if phase
+	return true
+end--end function
+--displayText:addEventListener("touch", magicwordListener )
+
+
+
+--******************************************************************************
+--CREATE ALPHABET GRID for touch interaction with copy, 
+--then compare original array to magic word 
+--******************************************************************************
 local initialX = endX - 155
 local startLetters = initialX
 local yCoord = startY
@@ -146,8 +192,14 @@ for i = 1, 26, 1 do
 				        -- end
 				        newLetter[i].alpha = 1
 				        newLetter[i]:setFillColor(1,0,0)
+				        --print (new)
 					    if (string.find(magicword,alphabet[i])~=nil) then 
 					        print("This letter was pressed in the event: "..alphabet[i])
+					        if (newLetter[i].alpha > .25 and string.find(magicword,alphabet[i])~=nil) then
+								print (tostring(alphabet[i]) .." was tapped.")
+								string.sub(string.find(magicCopy[1],alphabet[i])).alpha = 1
+							end--end if
+
 					    end
 			    end
 
@@ -167,31 +219,56 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+--OLD CODE FOR MAGICWORD EVENT LISTENER:
+
 --display text for magicword
-local displayText = display.newText(magicword, 100,
-	255, native.systemFontBold, 55 )
+-- local displayText = display.newText(magicword, 150,
+-- 	255, native.systemFontBold, 55 )
 
-displayText.alpha = .025
+-- displayText.alpha = .025
 
-local function wordListener( event )
-	if ( event.phase == "began" ) then
-			displayText.alpha = 1
-			displayText:setFillColor(1,0,0)
-			--for loop to determine tapped status after magic word activated
-			local var
-			for i = 1, 26, 1 do 
-				--alphabet[i]:removeEventListener("touch",letterListener)
+-- local function wordListener( event )
+-- 	if ( event.phase == "began" ) then
+-- 			displayText.alpha = 1
+-- 			displayText:setFillColor(1,0,0)
+-- 			--for loop to determine tapped status after magic word activated
+-- 			local var
+-- 			for i = 1, 26, 1 do 
+-- 				--alphabet[i]:removeEventListener("touch",letterListener)
 				
 
-				if (alphabet[i].alpha > .25) then
-				--	print (tostring(alphabet[i]) .." was tapped.")
-					displayText.alpha = 1
-				end--end if
-			end --end for
-	end--end if phase
-	return true
-end--end function
-displayText:addEventListener("touch", wordListener )
+-- 				if (newLetter[i].alpha > .25) then
+-- 				--	print (tostring(alphabet[i]) .." was tapped.")
+-- 					displayText.alpha = 1
+-- 				end--end if
+-- 			end --end for
+-- 	end--end if phase
+-- 	return true
+-- end--end function
+-- displayText:addEventListener("touch", wordListener )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
